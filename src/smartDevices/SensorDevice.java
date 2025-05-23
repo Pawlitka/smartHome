@@ -1,4 +1,4 @@
-package smart.devices;
+package smartDevices;
 
 public interface SensorDevice<T> {
     T readValue();

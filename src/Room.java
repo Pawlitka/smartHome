@@ -1,4 +1,4 @@
-import smart.devices.SmartDevice;
+import smartDevices.SmartDevice;
 
 import java.util.ArrayList;
 
@@ -24,8 +24,25 @@ public class Room {
         return devices;
     }
 
+    public String getDevicesAsString() {
+        if(devices.isEmpty()) {
+            return "NONE";
+        }
+
+        String devicesAsString = "";
+        for(SmartDevice device : devices) {
+            devicesAsString += device + ", ";
+        }
+        return devicesAsString;
+    }
+
+
     public String getName() {
-        return this.name;
+        return name;
+    }
+
+    public String getRoomType() {
+        return type.name();
     }
 
     @Override

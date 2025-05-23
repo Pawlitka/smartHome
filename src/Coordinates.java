@@ -16,6 +16,6 @@ public class Coordinates {
     }
 
     public static Coordinates getRandom() {
-        return new Coordinates(Math.random() + 1,Math.random() + 1);
+        return new Coordinates((Math.random() + 1) * 100,(Math.random() + 1) * 100);
     }
 }

@@ -1,4 +1,4 @@
-package smart.devices;
+package smartDevices;
 
 public enum DeviceStatus {
     ON,

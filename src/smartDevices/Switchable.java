@@ -1,4 +1,4 @@
-package smart.devices;
+package smartDevices;
 
 public interface Switchable {
      void turnOff();

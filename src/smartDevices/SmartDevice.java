@@ -1,4 +1,4 @@
-package smart.devices;
+package smartDevices;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -19,14 +19,15 @@ public abstract class SmartDevice {
 
     public void setStatus(DeviceStatus status) {
         checkIfStatusIsAllowed(status);
+        this.status = status;
     }
 
     public DeviceStatus getStatus() {
         return status;
     }
 
+    @Override
     public String toString() {
-
         return uuid + " " + name + " " + status;
     }
 

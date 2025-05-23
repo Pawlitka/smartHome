@@ -1,4 +1,4 @@
-package smart.devices;
+package smartDevices;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -18,6 +18,7 @@ public class LightBulb extends SmartDevice implements Switchable {
         super(ALLOWED_STATUSES);
         super.name = name;
         isOn = false;
+        this.status = DeviceStatus.OFF;
     }
 
     public Color getRGBColor() {
@@ -61,35 +62,26 @@ public class LightBulb extends SmartDevice implements Switchable {
     }
 
     public Float setHue(Float value) {
-        try {
-            if (0 <= value && value < 360) {
-                this.hue = value;
+            if (0 <= value && value > 360) {
+                throw new IllegalArgumentException("Hue has to be greater or equal to 0 and smaller than 360");
             }
-        } catch (IllegalArgumentException e) {
-            System.out.println("Hue has to be greater or equal to 0 and smaller than 360");
-        }
+            this.hue = value;
         return hue;
     }
 
     public Float setSaturation(Float value) {
-        try {
             if(0 <= value && value <= 1) {
-                this.saturation = value;
+                throw new IllegalArgumentException("Saturation has to be greater or equal to 0 and smaller or equal to 1");
             }
-        } catch (IllegalArgumentException e) {
-            System.out.println("Saturation has to be greater or equal to 0 and smaller or equal to 1");
-        }
+            this.saturation = value;
         return saturation;
     }
 
     public Float setValue(Float value) {
-        try {
-            if(0 <= value && value <= 1) {
-                this.value = value;
-            }
-        } catch (IllegalArgumentException e) {
-            System.out.println("Value has to be greater or equal to 0 and smaller or equal to 1");
+        if(0 <= value && value <= 1) {
+            throw new IllegalArgumentException("Value has to be greater or equal to 0 and smaller or equal to 1");
         }
+        this.value = value;
         return value;
     }
 }

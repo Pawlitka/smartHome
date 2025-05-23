@@ -1,4 +1,4 @@
-package smart.devices;
+package smartDevices;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,6 +15,7 @@ public class Outlet extends SmartDevice implements Switchable {
         super(ALLOWED_STATUSES);
         super.name = name;
         this.isOn = false;
+        this.status = DeviceStatus.OFF;
     }
 
     @Override

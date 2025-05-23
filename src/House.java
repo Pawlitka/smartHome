@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class House {
     private final String name;
@@ -6,10 +7,10 @@ public class House {
     private final Integer areaSize;
     private Integer numberOfRooms;
     private final String address;
-    private final ArrayList<Room> rooms;
+    private final HashMap<String, Room> rooms;
 
     public House(String name, Integer areaSize, String address) {
-        this.rooms = new ArrayList<>();
+        this.rooms = new HashMap<>();
         this.name = name;
         this.coordinates = Coordinates.getRandom();
         this.areaSize = areaSize;
@@ -18,27 +19,24 @@ public class House {
     }
 
     public void addRoom(Room room) {
-        rooms.add(room);
+        rooms.put(room.getName(), room);
         numberOfRooms++;
-        System.out.println(room.getName() + " has been added to house.");
     }
 
     public void deleteRoom(Room room) {
-        rooms.remove(room);
+        rooms.put(room.getName(), room);
         numberOfRooms--;
-        System.out.println(room + " has been deleted to house.");
     }
 
-    public ArrayList<Room> getRooms() {
+    public HashMap<String, Room> getRooms() {
         return rooms;
     }
 
-    public void getNumberOfRooms() {
-        System.out.println("There is: " + numberOfRooms + " rooms is this house.");
+    public Integer getNumberOfRooms() {
+        return numberOfRooms;
     }
 
     public Integer getAreaSize() {
-        System.out.println("Area size of this house is: " + areaSize +"m².");
         return areaSize;
     }
 
