@@ -1,6 +1,4 @@
-import smartDevices.Outlet;
-import smartDevices.SmartDevice;
-import smartDevices.TemperatureSensor;
+import smartDevices.*;
 
 import java.util.HashMap;
 import java.util.Scanner;
@@ -44,6 +42,9 @@ public class CommandLineInterface {
             case "create_house":
                 createHouse();
                 break;
+            case "remove_house":
+                removeHouse();
+                break;
             case "list_houses":
                 listHouses();
                 break;
@@ -55,6 +56,9 @@ public class CommandLineInterface {
                 break;
             case "create_room":
                 createRoom();
+                break;
+            case "remove_room":
+                removeRoom();
                 break;
             case "enter_room":
                 enterRoom();
@@ -113,6 +117,24 @@ public class CommandLineInterface {
 
 
         System.out.println("House \"" + house.getName() + "\" has been created successfully!");
+    }
+
+    private void removeHouse() {
+        if(houses.isEmpty()) {
+            System.out.println("There is no any house yet. You cannot remove house.");
+        } else {
+            printCommandLine("Enter name for house that you want to delete: ");
+            String name;
+            do {
+                name = scanner.nextLine();
+                if(!houses.containsKey(name)) {
+                    System.out.println("House with \"" + name + "\" does not exists. Please use valid name for the house.");
+                }
+            } while(houses.containsKey(name));
+            currentHouse = null;
+            houses.remove(name);
+            System.out.println("House \"" + name + "\n has been deleted successfully!");
+        }
     }
 
     private void listHouses() {
@@ -189,6 +211,29 @@ public class CommandLineInterface {
         }
     }
 
+    private void removeRoom() {
+        if(currentHouse == null) {
+            System.out.println("Enter the house where you want to delete a room.");
+        } else {
+            if(currentHouse.getRooms().isEmpty()) {
+                System.out.println("There is no any rooms yet in this house.");
+            } else {
+                printCommandLine("Enter name for room that you want to delete");
+                String name;
+                do {
+                    name = scanner.nextLine();
+                    if(!currentHouse.getRooms().containsKey(name)) {
+                        System.out.println("Room with \"" + name + "\" does not exists. Please use valid name for the room.");
+                    }
+                } while(!currentHouse.getRooms().containsKey(name));
+
+                currentHouse.getRooms().remove(name);
+                currentRoom = null;
+                System.out.println("Room \"" + name + "\n has been deleted successfully!");
+            }
+        }
+    }
+
     private void enterRoom() {
         if(currentHouse == null) {
             System.out.println("Enter the house where you want to enter a room.");
@@ -253,13 +298,132 @@ public class CommandLineInterface {
 
     private void currentDeviceCommands() {
         if(currentDevice instanceof TemperatureSensor) {
-            // show the TemperatureSensor possibilities/commands
+            System.out.println("""
+                    Commands that are available for temperature sensor:\s
+                    simulate
+                    set_temperature
+                    set_status
+                    get_temperature
+                    """);
         } else if(currentDevice instanceof Outlet) {
-            // show the TemperatureSensor possibilities/commands
-        } // etc
+            System.out.println("""
+                    Commands that are available for outlet:\s
+                    simulate
+                    turn_on
+                    turn_off
+                    is_on
+                    is_in_use
+                    """);
+        }  else if(currentDevice instanceof LightBulb) {
+            System.out.println("""
+                    Commands that are available for light bulb:\s
+                    simulate
+                    turn_on
+                    turn_off
+                    is_on
+                    set_hue
+                    set_saturation
+                    set_value
+                    get_color
+                    """);
+        }
+}
+
+    private void createDevice() {
+        if (currentHouse == null || currentRoom == null) {
+            System.out.println("Enter the house and room where you want to add devices.");
+        } else {
+            String name;
+            do {
+                printCommandLine("Enter name for device");
+                name = scanner.nextLine();
+                if (currentRoom.getDevices().containsKey(name)) {
+                    System.out.println("Device\"" + name + "\" already exists. Please choose other name.");
+                }
+            } while (currentRoom.getDevices().containsKey(name));
+
+            printCommandLine("Enter type of device by its name (case-insensitive).");
+            listDevicesTypes();
+            String deviceTypeName = "";
+            do {
+                printCommandLine("Enter ordinal for device type");
+                deviceTypeName = scanner.nextLine();
+                try {
+                    DevicesTypes type = DevicesTypes.valueOf(deviceTypeName);
+                } catch (IllegalArgumentException _) {
+                    System.out.println("The \"" + deviceTypeName + "\" does not exist!");
+                    deviceTypeName = "";
+                }
+            } while (deviceTypeName.isEmpty());
+
+            switch (deviceTypeName) {
+                case "lightbulb" -> {
+                    LightBulb lightbulb = new LightBulb(name);
+                    currentRoom.addDevice(lightbulb);
+                    System.out.println("Lightbulb has been successfully created.");
+                }
+                case "outlet" -> {
+                    Outlet outlet = new Outlet(name);
+                    currentRoom.addDevice(outlet);
+                    System.out.println("Outlet has been successfully created.");
+                }
+                case "temperature_sensor" -> {
+                    TemperatureSensor temperatureSensor = new TemperatureSensor(name);
+                    currentRoom.addDevice(temperatureSensor);
+                    System.out.println("Temperature sensor has been successfully created.");
+                }
+            }
+        }
     }
 
-    private void printCommandLine(String phrase) {
-        System.out.print(getPrefixCli() + phrase + " > ");
+    private void removeDevice() {
+        if(currentHouse == null && currentRoom == null) {
+            System.out.println("Enter the house and room where you want to delete a room.");
+        } else {
+            if(currentRoom.getDevices().isEmpty()) {
+                System.out.println("There is no any rooms and devices yet in this house.");
+            } else {
+                printCommandLine("Enter name for device that you want to delete");
+                String name;
+                do {
+                    name = scanner.nextLine();
+                    if(!currentRoom.getDevices().containsKey(name)) {
+                        System.out.println("Device with \"" + name + "\" does not exists. Please use valid name for the device.");
+                    }
+                } while(!currentRoom.getDevices().containsKey(name));
+
+                currentRoom.getDevices().remove(name);
+                currentDevice = null;
+                System.out.println("Device \"" + name + "\n has been deleted successfully!");
+            }
+        }
     }
+
+    private void listDevicesTypes() {
+        System.out.println("Devices types");
+        for(DevicesTypes type : DevicesTypes.values()) {
+            System.out.println(type.ordinal() + ". " + type.name());
+        }
+    }
+
+    private void listDevices() {
+        if(currentHouse == null || currentRoom == null) {
+            System.out.println("Enter the house and room where you want to list devices.");
+        } else {
+            if(currentRoom.getDevices().isEmpty()) {
+                System.out.println("There are no created devices yet!\nUse \"create_device\" command to create one.");
+            } else {
+                System.out.println("DEVICE NAME | DEVICE STATUS");
+                for(SmartDevice device : currentRoom.getDevices().values()) {
+                    System.out.println(device.getName() + " | " + device.getStatus());
+                }
+            }
+        }
+    }
+
+
+
+private void printCommandLine(String phrase) {
+System.out.print(getPrefixCli() + phrase + " > ");
+}
 }

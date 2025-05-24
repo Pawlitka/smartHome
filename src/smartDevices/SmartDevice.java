@@ -37,4 +37,7 @@ public abstract class SmartDevice {
         }
     }
 
+    public String getName() {
+        return name;
+    }
 }

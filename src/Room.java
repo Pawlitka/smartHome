@@ -1,11 +1,12 @@
 import smartDevices.SmartDevice;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Room {
     private final String name;
     private final RoomType type;
-    private final ArrayList<SmartDevice> devices = new ArrayList<>();
+    private final HashMap<String, SmartDevice>  devices = new HashMap<>();
 
     public Room(String name, RoomType type) {
         this.name = name;
@@ -13,14 +14,14 @@ public class Room {
     }
 
     public void addDevice(SmartDevice device) {
-        devices.add(device);
+        devices.put(device.getName(), device);
     }
 
     public void removeDevice(SmartDevice device) {
-        devices.remove(device);
+        devices.remove(device.getName(), device);
     }
 
-    public ArrayList<SmartDevice> getDevices() {
+    public HashMap<String, SmartDevice> getDevices() {
         return devices;
     }
 
@@ -30,7 +31,7 @@ public class Room {
         }
 
         String devicesAsString = "";
-        for(SmartDevice device : devices) {
+        for(SmartDevice device : devices.values()) {
             devicesAsString += device + ", ";
         }
         return devicesAsString;
