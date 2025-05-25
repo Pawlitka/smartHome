@@ -15,7 +15,7 @@ public class LightBulb extends SmartDevice implements Switchable {
     private Float value = 0.98F;
 
     public LightBulb(String name) {
-        super(ALLOWED_STATUSES);
+        super(ALLOWED_STATUSES, DeviceType.LIGHTBULB);
         super.name = name;
         isOn = false;
         this.status = DeviceStatus.OFF;

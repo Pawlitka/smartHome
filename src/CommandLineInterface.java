@@ -8,6 +8,7 @@ public class CommandLineInterface {
     private boolean isProgramRunning;
     private House currentHouse = null;
     private Room currentRoom = null;
+    private Rules rules;
 
     public CommandLineInterface() {
         scanner = new Scanner(System.in);
@@ -82,6 +83,12 @@ public class CommandLineInterface {
             case "manage_device":
                 manageDevice();
                 break;
+            case "run rules":
+                rules.turnOnHeaterWhenCold.execute();
+                rules.changeTvChannelIfOn.execute();
+                rules.softLightTurnOn.execute();
+                rules.turnOffUnusedOutlet.execute();
+                break;
             default:
                 System.out.println("Unknown command: " + command);
                 break;
@@ -90,11 +97,24 @@ public class CommandLineInterface {
 
     private void showHelp() {
         System.out.println("Available commands:");
-        System.out.println("help           - Show available commands");
-        System.out.println("  create house         - Create house");
-        System.out.println("  create room         - Create room");
-        System.out.println("  create smart device         - To create device");
-        System.out.println("  exit           - Exit the CommandLineInterface");
+        System.out.println(" help              - Show this list of commands and their explanations");
+        System.out.println(" create_house      - Create a new smart house");
+        System.out.println(" remove_house      - Remove an existing house from the system");
+        System.out.println(" list_houses       - Display all created houses");
+        System.out.println(" enter_house       - Enter a selected house to manage its rooms and devices");
+        System.out.println(" exit_house        - Exit the currently entered house");
+        System.out.println(" create_room       - Create a new room in the currently entered house");
+        System.out.println(" remove_room       - Remove a room from the currently entered house");
+        System.out.println(" enter_room        - Enter a selected room to manage its devices");
+        System.out.println(" list_rooms        - Show a list of all rooms in the current house");
+        System.out.println(" list_room_types   - List available room types (e.g. Kitchen, Living Room)");
+        System.out.println(" exit_room         - Exit the currently entered room");
+        System.out.println(" create_device     - Add a new smart device to the currently entered room");
+        System.out.println(" remove_device     - Remove a smart device from the current room");
+        System.out.println(" list_devices      - Show all devices in the current room");
+        System.out.println(" manage_device     - Interact with a specific smart device");
+        System.out.println(" run rules         - Execute automation rules for the current setup");
+        System.out.println(" exit              - Exit the application");
     }
 
     private void createHouse() {
@@ -385,7 +405,7 @@ public class CommandLineInterface {
                 printCommandLine("Enter ordinal for device type");
                 deviceTypeName = scanner.nextLine();
                 try {
-                    DevicesTypes type = DevicesTypes.valueOf(deviceTypeName);
+                    DeviceType type = DeviceType.valueOf(deviceTypeName);
                 } catch (IllegalArgumentException _) {
                     System.out.println("The \"" + deviceTypeName + "\" does not exist!");
                     deviceTypeName = "";
@@ -451,7 +471,7 @@ public class CommandLineInterface {
 
     private void listDevicesTypes() {
         System.out.println("Devices types");
-        for (DevicesTypes type : DevicesTypes.values()) {
+        for (DeviceType type : DeviceType.values()) {
             System.out.println(type.ordinal() + ". " + type.name());
         }
     }
@@ -586,55 +606,144 @@ public class CommandLineInterface {
 
     private void executeTemperatureSensorCommand(TemperatureSensor temperatureSensor, String command, Object input) {
         switch (command) {
-            case "get_temperature" -> System.out.println(temperatureSensor.getTemperature());
-            case "set_temperature" -> temperatureSensor.setTemperature(Double.valueOf(input.toString()));
-            case "set_status" -> temperatureSensor.setStatus(DeviceStatus.valueOf(input.toString()));
+            case "get_temperature" -> {
+                System.out.println(temperatureSensor.getTemperature());
+                Logger.log("Get temperature", temperatureSensor, currentRoom.getName(), "get_temperature");
+            }
+            case "set_temperature" -> {
+                temperatureSensor.setTemperature(Double.valueOf(input.toString()));
+                Logger.log("Set temperature", temperatureSensor, currentRoom.getName(), "set_temperature");
+            }
+            case "set_status" -> {
+                temperatureSensor.setStatus(DeviceStatus.valueOf(input.toString()));
+                Logger.log("Set status", temperatureSensor, currentRoom.getName(), "set_status");
+            }
         }
     }
 
     private void executeOutletCommand(Outlet outlet, String command, Object input) {
         switch (command) {
-            case "turn_on" -> outlet.turnOn();
-            case "turn_off" -> outlet.turnOff();
-            case "is_in_use" -> outlet.isInUse();
-            case "use_outlet" -> outlet.useOutlet();
+            case "turn_on" -> {
+                outlet.turnOn();
+                Logger.log("turn on", outlet, currentRoom.getName(), "turn_on");
+            }
+            case "turn_off" -> {
+                outlet.turnOff();
+                Logger.log("turn off", outlet, currentRoom.getName(), "turn_off");
+
+            }
+            case "is_in_use" -> {
+                outlet.isInUse();
+                Logger.log("is in use", outlet, currentRoom.getName(), "is_in_use");
+
+            }
+            case "use_outlet" -> {
+                outlet.useOutlet();
+                Logger.log("use outlet", outlet, currentRoom.getName(), "use_outlet");
+
+            }
         }
     }
 
     private void executeLightBulbCommand(LightBulb lightBulb, String command, Object input) {
         switch (command) {
-            case "turn_on" -> lightBulb.turnOn();
-            case "turn_off" -> lightBulb.turnOff();
-            case "is_on" -> System.out.println(lightBulb.isOn());
-            case "set_hue" -> lightBulb.setHue(Float.valueOf(input.toString()));
-            case "set_saturation" -> lightBulb.setSaturation(Float.valueOf(input.toString()));
-            case "set_value" -> lightBulb.setValue(Float.valueOf(input.toString()));
-            case "get_color" -> System.out.println(lightBulb.getRGBColor());
+            case "turn_on" -> {
+                lightBulb.turnOn();
+                Logger.log("turn on", lightBulb, currentRoom.getName(), "turn_on");
+
+            }
+            case "turn_off" -> {
+                lightBulb.turnOff();
+                Logger.log("turn off", lightBulb, currentRoom.getName(), "turn_off");
+
+            }
+            case "is_on" -> {
+                System.out.println(lightBulb.isOn());
+                Logger.log("is on", lightBulb, currentRoom.getName(), "is_on");
+
+            }
+            case "set_hue" -> {
+                lightBulb.setHue(Float.valueOf(input.toString()));
+                Logger.log("set_hue", lightBulb, currentRoom.getName(), "set_hue");
+
+            }
+            case "set_saturation" -> {
+                lightBulb.setSaturation(Float.valueOf(input.toString()));
+                Logger.log("set saturation", lightBulb, currentRoom.getName(), "set_saturation");
+
+            }
+            case "set_value" -> {
+                lightBulb.setValue(Float.valueOf(input.toString()));
+                Logger.log("set value", lightBulb, currentRoom.getName(), "set_value");
+
+            }
+            case "get_color" -> {
+                System.out.println(lightBulb.getRGBColor());
+                Logger.log("get color", lightBulb, currentRoom.getName(), "get_color");
+
+            }
         }
     }
 
     private void executeMotionSensorCommands(MotionSensor motionSensor, String command, Object input) {
         switch(command) {
-            case "set_status" -> motionSensor.setStatus(DeviceStatus.valueOf(input.toString()));
-            case "is_motion_detected" -> System.out.println(motionSensor.isMotionDetected());
+            case "set_status" -> {
+                motionSensor.setStatus(DeviceStatus.valueOf(input.toString()));
+                Logger.log("set status", motionSensor, currentRoom.getName(), "set_status");
+
+            }
+            case "is_motion_detected" -> {
+                System.out.println(motionSensor.isMotionDetected());
+                Logger.log("is motion detected", motionSensor, currentRoom.getName(), "is_motion_detected");
+
+
+            }
         }
     }
 
     private void executeSmartTvCommands(SmartTv smartTv, String command, Object input) {
         switch(command) {
-            case "turn_on" -> smartTv.turnOn();
-            case "turn_off" -> smartTv.turnOff();
-            case "is_on" -> System.out.println(smartTv.isOn());
+            case "turn_on" -> {
+                smartTv.turnOn();
+                Logger.log("turn on", smartTv, currentRoom.getName(), "turn_on");
+
+            }
+            case "turn_off" -> {
+                smartTv.turnOff();
+                Logger.log("turn off", smartTv, currentRoom.getName(), "turn_off");
+
+            }
+            case "is_on" -> {
+                System.out.println(smartTv.isOn());
+                Logger.log("is on", smartTv, currentRoom.getName(), "is_on");
+
+            }
 
         }
     }
 
     private void executeDevicesManagerCommands(DevicesManager devicesManager, String command, Object input) {
         switch(command) {
-            case "turn_devices_off" -> devicesManager.turnAllOff();
-            case "turn_devices_on" -> devicesManager.turnAllOn();
-            case "set_status" -> devicesManager.setStatus(DeviceStatus.valueOf(input.toString()));
-            case "update" -> devicesManager.notifyObservers();
+            case "turn_devices_off" -> {
+                devicesManager.turnAllOff();
+                Logger.log("turn devices off", devicesManager, currentRoom.getName(), "turn_devices_off");
+
+            }
+            case "turn_devices_on" -> {
+                devicesManager.turnAllOn();
+                Logger.log("turn devices on", devicesManager, currentRoom.getName(), "turn_devices_on");
+
+            }
+            case "set_status" -> {
+                devicesManager.setStatus(DeviceStatus.valueOf(input.toString()));
+                Logger.log("set_status", devicesManager, currentRoom.getName(), "set_status");
+
+            }
+            case "update" -> {
+                devicesManager.notifyObservers();
+                Logger.log("update", devicesManager, currentRoom.getName(), "update");
+
+            }
         }
     }
 

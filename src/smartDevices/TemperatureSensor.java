@@ -18,7 +18,7 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice, Swit
     private  Double currentTemperature;
 
     public TemperatureSensor(String name) {
-        super(ALLOWED_STATUSES);
+        super(ALLOWED_STATUSES, DeviceType.TEMPERATURE_SENSOR);
         super.name = name;
         this.currentTemperature = (Math.random() * 80) - 40;
         this.status = DeviceStatus.OFF;
@@ -91,4 +91,5 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice, Swit
     public boolean isOn() {
         return isOn;
     }
+
 }

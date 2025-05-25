@@ -1,6 +1,6 @@
 package smartDevices;
 
-public enum DevicesTypes {
+public enum DeviceType {
     LIGHTBULB,
     OUTLET,
     TEMPERATURE_SENSOR,

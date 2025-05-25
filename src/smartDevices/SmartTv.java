@@ -15,7 +15,7 @@ public class SmartTv extends SmartDevice implements Switchable {
     private final Random random = new Random();
 
     public SmartTv(String name) {
-        super(ALLOWED_STATUSES);
+        super(ALLOWED_STATUSES, DeviceType.SMART_TV);
         super.name = name;
         isOn = false;
         status = DeviceStatus.OFF;

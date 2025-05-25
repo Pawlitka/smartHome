@@ -8,11 +8,13 @@ import java.util.stream.Collectors;
 public abstract class SmartDevice {
     protected final UUID uuid;
     protected String name;
+    protected final DeviceType type;
     protected DeviceStatus status = DeviceStatus.OFF;
     protected final HashSet<DeviceStatus> allowedStatuses;
 
-    SmartDevice(HashSet<DeviceStatus> allowedStatuses) {
+    SmartDevice(HashSet<DeviceStatus> allowedStatuses, DeviceType type) {
         this.allowedStatuses = allowedStatuses;
+        this.type = type;
         this.uuid = UUID.randomUUID();
     }
 
@@ -44,5 +46,9 @@ public abstract class SmartDevice {
 
     public String getName() {
         return name;
+    }
+
+    public DeviceType getType() {
+        return type;
     }
 }

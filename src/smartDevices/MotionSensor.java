@@ -15,7 +15,7 @@ public class MotionSensor extends SmartDevice implements SensorDevice, Switchabl
     ));
 
     public MotionSensor(String name) {
-        super(ALLOWED_STATUSES);
+        super(ALLOWED_STATUSES, DeviceType.MOTION_SENSOR);
         this.motionDetected = false;
         this.status = DeviceStatus.OFF;
         this.name = name;

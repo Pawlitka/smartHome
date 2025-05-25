@@ -11,7 +11,7 @@ public class DevicesManager extends SmartDevice implements ObservableDevice, Dev
     private final List<Rule> rules = new ArrayList<>();
 
     public DevicesManager() {
-        super(ALLOWED_STATUSES);
+        super(ALLOWED_STATUSES, DeviceType.DEVICES_MANAGER);
         name = "DevicesManager";
         devices.put(name, this);
         this.status = DeviceStatus.ON;

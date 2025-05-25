@@ -5,14 +5,14 @@ import java.util.HashSet;
 
 public class Outlet extends SmartDevice implements Switchable {
     private boolean isOn;
-    private boolean isUse;
+    boolean isUse;
     private final static HashSet<DeviceStatus> ALLOWED_STATUSES = new HashSet<>(Arrays.asList(
             DeviceStatus.ON,
             DeviceStatus.OFF
     ));
 
     public Outlet(String name) {
-        super(ALLOWED_STATUSES);
+        super(ALLOWED_STATUSES, DeviceType.OUTLET);
         super.name = name;
         this.isOn = false;
         this.isUse = false;
