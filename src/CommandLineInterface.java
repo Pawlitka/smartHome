@@ -83,7 +83,7 @@ public class CommandLineInterface {
             case "manage_device":
                 manageDevice();
                 break;
-            case "run rules":
+            case "run_rules":
                 rules.turnOnHeaterWhenCold.execute();
                 rules.changeTvChannelIfOn.execute();
                 rules.softLightTurnOn.execute();
@@ -433,11 +433,6 @@ public class CommandLineInterface {
                     currentRoom.addDevice(smartTv);
                     System.out.println("Smart tv has been successfully created.");
                 }
-//                case "DEVICES_MANAGER" -> {
-//                    DevicesManager devicesManager = new DevicesManager();
-//                    currentRoom.addDevice(devicesManager);
-//                    System.out.println("Devices manager has been successfully created.");
-//                }
                 case "MOTION_SENSOR" -> {
                     MotionSensor motionSensor = new MotionSensor(name);
                     currentRoom.addDevice(motionSensor);

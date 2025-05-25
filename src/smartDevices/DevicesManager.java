@@ -29,11 +29,7 @@ public class DevicesManager extends SmartDevice implements ObservableDevice, Dev
                 + " changed to: " + getStatus());
     }
 
-    @Override
-    public void addObserver(DeviceObserver observer) {
-        observers.add(observer);
 
-    }
     public void addRule(Rule rule) {
         rules.add(rule);
         System.out.println("[Rule was added  " + rule);
@@ -44,11 +40,6 @@ public class DevicesManager extends SmartDevice implements ObservableDevice, Dev
         for (Rule rule : rules) {
             rule.execute();
         }
-    }
-
-    @Override
-    public void removeObserver(DeviceObserver observer) {
-        observers.remove(observer);
     }
 
     @Override

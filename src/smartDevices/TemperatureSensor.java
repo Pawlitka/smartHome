@@ -26,7 +26,6 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice, Swit
 
     @Override
     public void simulate() {
-        isTemperatureLow.execute();
         this.status = DeviceStatus.ON;
         double temperature = readValue();
         String unit = getUnit();
@@ -61,10 +60,6 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice, Swit
     public Double getTemperature() {
         return currentTemperature;
     }
-
-    private final Rule isTemperatureLow = new Rule(this,
-            _ -> getTemperature() < 16,
-            _ -> setTemperature(currentTemperature + (Math.random() + 1) * 3));
 
     @Override
     public void turnOff() {
