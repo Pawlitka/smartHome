@@ -6,5 +6,6 @@ public enum DeviceStatus {
     ACTIVE,
     FAULT,
     LOW_BATTERY,
-    TAMPERED
+    TAMPERED,
+    SLEEP_MODE
 }

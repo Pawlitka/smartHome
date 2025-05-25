@@ -1,5 +1,5 @@
 package smartDevices;
 
 public interface DeviceObserver {
-    void update(ObservableDevice device);
+    void update(SmartDevice device);
 }

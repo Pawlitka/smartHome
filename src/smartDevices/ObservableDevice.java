@@ -6,4 +6,5 @@ public interface ObservableDevice {
     void removeObserver(DeviceObserver observer);
 
     void notifyObservers();
+
 }

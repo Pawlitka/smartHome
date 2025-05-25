@@ -387,6 +387,21 @@ public class CommandLineInterface {
                     currentRoom.addDevice(temperatureSensor);
                     System.out.println("Temperature sensor has been successfully created.");
                 }
+                case "SMART_TV" -> {
+                    SmartTv smartTv = new SmartTv(name);
+                    currentRoom.addDevice(smartTv);
+                    System.out.println("Smart tv has been successfully created.");
+                }
+                case "DEVICES_MANAGER" -> {
+                    DevicesManager devicesManager = new DevicesManager(name);
+                    currentRoom.addDevice(devicesManager);
+                    System.out.println("Devices manager has been successfully created.");
+                }
+                case "MOTION_SENSOR" -> {
+                    MotionSensor motionSensor = new MotionSensor(name);
+                    currentRoom.addDevice(motionSensor);
+                    System.out.println("Motion sensor has been successfully created.");
+                }
             }
         }
     }
@@ -512,6 +527,17 @@ public class CommandLineInterface {
             } while (input == null);
         }
 
+        if(command.equals("add_device")) {
+            do {
+                printCommandLine("Enter device name that you want to add to manager");
+                input = scanner.nextLine();
+                if(input != currentRoom.getDevice(name)) {
+                    System.out.println("Device with name " + name + " does not exist. Enter valid name.");
+                }
+            } while (input == null);
+            input = currentRoom.getDevice(name);
+        }
+
         executeDeviceCommand(device, command, input);
 
     }
@@ -554,6 +580,32 @@ public class CommandLineInterface {
             case "set_saturation" -> lightBulb.setSaturation(Float.valueOf(input.toString()));
             case "set_value" -> lightBulb.setValue(Float.valueOf(input.toString()));
             case "get_color" -> System.out.println(lightBulb.getRGBColor());
+        }
+    }
+
+    private void executeMotionSensorCommands(MotionSensor motionSensor, String command, Object input) {
+        switch(command) {
+            case "set_status" -> motionSensor.setStatus(DeviceStatus.valueOf(input.toString()));
+            case "is_motion_detected" -> System.out.println(motionSensor.isMotionDetected());
+        }
+    }
+
+    private void executeSmartTvCommands(SmartTv smartTv, String command, Object input) {
+        switch(command) {
+            case "turn_on" -> smartTv.turnOn();
+            case "turn_off" -> smartTv.turnOff();
+            case "is_on" -> System.out.println(smartTv.isOn());
+
+        }
+    }
+
+    private void executeDevicesManagerCommands(DevicesManager devicesManager, String command, Object input) {
+        switch(command) {
+            case "add_device" -> devicesManager.addDevice((SmartDevice) input);
+            case "turn_devices_off" -> devicesManager.turnAllOff();
+            case "turn_devices_on" -> devicesManager.turnAllOn();
+            case "set_status" -> devicesManager.setStatus(DeviceStatus.valueOf(input.toString()));
+            case "update" -> devicesManager.notifyObservers();
         }
     }
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class TemperatureSensor extends SmartDevice implements ObservableDevice {
+public class TemperatureSensor extends SmartDevice implements SensorDevice {
 
     private final static HashSet<DeviceStatus> ALLOWED_STATUSES = new HashSet<>(Arrays.asList(
             DeviceStatus.ON,
@@ -16,7 +16,6 @@ public class TemperatureSensor extends SmartDevice implements ObservableDevice {
     ));
 
     private  Double currentTemperature;
-    private final ArrayList<DeviceObserver> observers = new ArrayList<>();
 
     public TemperatureSensor(String name) {
         super(ALLOWED_STATUSES);
@@ -31,7 +30,6 @@ public class TemperatureSensor extends SmartDevice implements ObservableDevice {
         this.status = DeviceStatus.ON;
         double temperature = readValue();
         String unit = getUnit();
-        notifyObservers();
         System.out.println("Temperature sensor is reading: " +  String.format("%.2f",temperature) + unit);
     }
 
@@ -44,38 +42,18 @@ public class TemperatureSensor extends SmartDevice implements ObservableDevice {
         return "°C";
     }
 
-    @Override
-    public void addObserver(DeviceObserver observer) {
-        observers.add(observer);
-        System.out.println("Observer was added to this device.");
-    }
-
-    @Override
-    public void removeObserver(DeviceObserver observer) {
-        observers.remove(observer);
-        System.out.println("Observer was removed from this device.");
-    }
-
-    @Override
-    public void notifyObservers() {
-        for(DeviceObserver observer : observers) {
-            observer.update(this);
-        }
-    }
 
     public void setTemperature(Double temperature) {
             if (temperature < -40.0 || temperature > 40.0) {
                 throw new IllegalArgumentException("Temperature cannot be lower than -40" + getUnit() + " and higher than 40" + getUnit());
             }
         currentTemperature = temperature;
-        notifyObservers();
         System.out.println("You have changed temperature to " + String.format("%.2f",temperature) + getUnit());
     }
 
     public void setStatus(DeviceStatus newStatus) {
         if (this.status != newStatus) {
             this.status = newStatus;
-            notifyObservers();
         }
         System.out.println("Status was changed to " + newStatus);
     }
