@@ -15,6 +15,7 @@ public class Outlet extends SmartDevice implements Switchable {
         super(ALLOWED_STATUSES);
         super.name = name;
         this.isOn = false;
+        this.isUse = false;
         this.status = DeviceStatus.OFF;
     }
 
@@ -53,7 +54,15 @@ public class Outlet extends SmartDevice implements Switchable {
         return isOn;
     }
 
-    public boolean isInUse() {
-        return isUse;
+    public void isInUse() {
+        if(isUse) {
+            System.out.println("Outlet is used");
+        } else {
+            System.out.println("Outlet is not used");
+        }
+    }
+
+    public void useOutlet() {
+        isUse = true;
     }
 }

@@ -1,15 +1,13 @@
 import smartDevices.*;
 
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class CommandLineInterface {
     private final Scanner scanner;
-    private boolean isProgramRunning;
     private final HashMap<String, House> houses = new HashMap<>();
+    private boolean isProgramRunning;
     private House currentHouse = null;
     private Room currentRoom = null;
-    private SmartDevice currentDevice = null;
 
     public CommandLineInterface() {
         scanner = new Scanner(System.in);
@@ -72,6 +70,18 @@ public class CommandLineInterface {
             case "exit_room":
                 exit_room();
                 break;
+            case "create_device":
+                createDevice();
+                break;
+            case "remove_device":
+                removeDevice();
+                break;
+            case "list_devices":
+                listDevices();
+                break;
+            case "manage_device":
+                manageDevice();
+                break;
             default:
                 System.out.println("Unknown command: " + command);
                 break;
@@ -80,7 +90,7 @@ public class CommandLineInterface {
 
     private void showHelp() {
         System.out.println("Available commands:");
-        System.out.println("  help           - Show available commands");
+        System.out.println("help           - Show available commands");
         System.out.println("  create house         - Create house");
         System.out.println("  create room         - Create room");
         System.out.println("  create smart device         - To create device");
@@ -92,10 +102,10 @@ public class CommandLineInterface {
         String name;
         do {
             name = scanner.nextLine();
-            if(houses.containsKey(name)) {
+            if (houses.containsKey(name)) {
                 System.out.println("House with \"" + name + "\" already exists. Please use other name for the house.");
             }
-        } while(houses.containsKey(name));
+        } while (houses.containsKey(name));
 
 
         printCommandLine("Enter area size (in m²)");
@@ -120,44 +130,49 @@ public class CommandLineInterface {
     }
 
     private void removeHouse() {
-        if(houses.isEmpty()) {
+        if (houses.isEmpty()) {
             System.out.println("There is no any house yet. You cannot remove house.");
         } else {
-            printCommandLine("Enter name for house that you want to delete: ");
+            printCommandLine("Enter name for house that you want to delete");
             String name;
             do {
                 name = scanner.nextLine();
-                if(!houses.containsKey(name)) {
+                if (!houses.containsKey(name)) {
                     System.out.println("House with \"" + name + "\" does not exists. Please use valid name for the house.");
                 }
-            } while(houses.containsKey(name));
-            currentHouse = null;
-            houses.remove(name);
-            System.out.println("House \"" + name + "\n has been deleted successfully!");
+            } while (!houses.containsKey(name));
+
+            if (houses.containsKey(name)) {
+                currentHouse = null;
+                houses.remove(name);
+            } else {
+                houses.remove(name);
+            }
+            System.out.println("House \"" + name + "\" has been deleted successfully!");
         }
     }
 
     private void listHouses() {
-        if(houses.isEmpty()) {
+        if (houses.isEmpty()) {
             System.out.println("There are no created houses yet!\nUse \"create_house\" command to create one.");
         } else {
             System.out.println("HOUSE NAME | NUMBER OF ROOMS | ADDRESS");
-            for(House house : houses.values()) {
+            for (House house : houses.values()) {
                 System.out.println(house.getName() + " | " + house.getNumberOfRooms() + " | " + house.getAddress());
             }
         }
     }
 
     private void enter_house() {
-        if(houses.isEmpty()) {
+        if (houses.isEmpty()) {
             System.out.println("There are no created houses yet!\nUse \"create_house\" command to create one.");
         } else {
             listHouses();
             String name = null;
-            while(name == null || !houses.containsKey(name)) {
+            while (name == null || !houses.containsKey(name)) {
                 printCommandLine("Enter name for house");
                 name = scanner.nextLine();
-                if(!houses.containsKey(name)) {
+                if (!houses.containsKey(name)) {
                     System.out.println("The house with the name does not exist.");
                 }
             }
@@ -166,10 +181,10 @@ public class CommandLineInterface {
     }
 
     private void exit_house() {
-        if(currentRoom != null) {
+        if (currentRoom != null) {
             exit_room();
         }
-        if(currentHouse == null) {
+        if (currentHouse == null) {
             System.out.println("You are not in any house now.");
         } else {
             System.out.println("You left \"" + currentHouse.getName() + "\" house.");
@@ -178,15 +193,15 @@ public class CommandLineInterface {
     }
 
     private void createRoom() {
-        if(currentHouse == null) {
+        if (currentHouse == null) {
             System.out.println("Enter the house where you want to create a room.");
         } else {
             String name;
             do {
                 printCommandLine("Enter name for room");
                 name = scanner.nextLine();
-                if(currentHouse.getRooms().containsKey(name)) {
-                    System.out.println("The room\"" + name +"\" already exists. Please choose other name.");
+                if (currentHouse.getRooms().containsKey(name)) {
+                    System.out.println("The room\"" + name + "\" already exists. Please choose other name.");
                 }
             } while (currentHouse.getRooms().containsKey(name));
 
@@ -212,38 +227,40 @@ public class CommandLineInterface {
     }
 
     private void removeRoom() {
-        if(currentHouse == null) {
+        if (currentHouse == null) {
             System.out.println("Enter the house where you want to delete a room.");
         } else {
-            if(currentHouse.getRooms().isEmpty()) {
+            if (currentHouse.getRooms().isEmpty()) {
                 System.out.println("There is no any rooms yet in this house.");
             } else {
                 printCommandLine("Enter name for room that you want to delete");
                 String name;
                 do {
                     name = scanner.nextLine();
-                    if(!currentHouse.getRooms().containsKey(name)) {
+                    if (!currentHouse.getRooms().containsKey(name)) {
                         System.out.println("Room with \"" + name + "\" does not exists. Please use valid name for the room.");
                     }
-                } while(!currentHouse.getRooms().containsKey(name));
+                } while (!currentHouse.getRooms().containsKey(name));
 
-                currentHouse.getRooms().remove(name);
-                currentRoom = null;
-                System.out.println("Room \"" + name + "\n has been deleted successfully!");
+                currentHouse.deleteRoom(name);
+                if (Objects.equals(currentRoom.getName(), name)) {
+                    currentRoom = null;
+                }
+                System.out.println("Room \"" + name + "\" has been deleted successfully!");
             }
         }
     }
 
     private void enterRoom() {
-        if(currentHouse == null) {
+        if (currentHouse == null) {
             System.out.println("Enter the house where you want to enter a room.");
         } else {
             listRooms();
             String name = null;
-            while(name == null || !currentHouse.getRooms().containsKey(name)) {
+            while (name == null || !currentHouse.getRooms().containsKey(name)) {
                 printCommandLine("Enter name for room");
                 name = scanner.nextLine();
-                if(!currentHouse.getRooms().containsKey(name)) {
+                if (!currentHouse.getRooms().containsKey(name)) {
                     System.out.println("The room with the name does not exist.");
                 }
             }
@@ -252,14 +269,14 @@ public class CommandLineInterface {
     }
 
     private void listRooms() {
-        if(currentHouse == null) {
+        if (currentHouse == null) {
             System.out.println("Enter the house where you want to list rooms.");
         } else {
-            if(currentHouse.getRooms().isEmpty()) {
+            if (currentHouse.getRooms().isEmpty()) {
                 System.out.println("There are no created rooms yet!\nUse \"create_room\" command to create one.");
             } else {
                 System.out.println("ROOM NAME | ROOM TYPE | DEVICES");
-                for(Room room : currentHouse.getRooms().values()) {
+                for (Room room : currentHouse.getRooms().values()) {
                     System.out.println(room.getName() + " | " + room.getRoomType() + " | " + room.getDevicesAsString());
                 }
             }
@@ -268,14 +285,14 @@ public class CommandLineInterface {
 
     private void listRoomTypes() {
         System.out.println("Room types");
-        for(RoomType type : RoomType.values()) {
+        for (RoomType type : RoomType.values()) {
             System.out.println(type.ordinal() + ". " + type.name());
         }
     }
 
 
     private void exit_room() {
-        if(currentRoom == null) {
+        if (currentRoom == null) {
             System.out.println("You are not in any room now.");
         } else {
             System.out.println("You left \"" + currentRoom.getName() + "\" room.");
@@ -286,48 +303,46 @@ public class CommandLineInterface {
     private String getPrefixCli() {
         String housePrefix = "";
         String roomPrefix = "";
-        if(currentHouse != null) {
+        String devicePrefix = "";
+        if (currentHouse != null) {
             housePrefix += "[" + currentHouse.getName() + "] ";
         }
-        if(currentRoom != null) {
+        if (currentRoom != null) {
             roomPrefix += "(" + currentRoom.getName() + ") ";
         }
 
-        return housePrefix + roomPrefix;
+        return housePrefix + roomPrefix + devicePrefix;
     }
 
-    private void currentDeviceCommands() {
-        if(currentDevice instanceof TemperatureSensor) {
-            System.out.println("""
-                    Commands that are available for temperature sensor:\s
-                    simulate
-                    set_temperature
-                    set_status
-                    get_temperature
-                    """);
-        } else if(currentDevice instanceof Outlet) {
-            System.out.println("""
-                    Commands that are available for outlet:\s
-                    simulate
-                    turn_on
-                    turn_off
-                    is_on
-                    is_in_use
-                    """);
-        }  else if(currentDevice instanceof LightBulb) {
-            System.out.println("""
-                    Commands that are available for light bulb:\s
-                    simulate
-                    turn_on
-                    turn_off
-                    is_on
-                    set_hue
-                    set_saturation
-                    set_value
-                    get_color
-                    """);
+    private List<String> getdeviceCommands(SmartDevice device) {
+        if (device instanceof TemperatureSensor) {
+            return List.of(
+                    "set_temperature",
+                    "set_status",
+                    "get_temperature"
+            );
         }
-}
+        if (device instanceof Outlet) {
+            return List.of(
+                    "turn_on",
+                    "turn_off",
+                    "use_outlet",
+                    "is_in_use"
+            );
+        }
+        if (device instanceof LightBulb) {
+            return List.of(
+                    "turn_on",
+                    "turn_off",
+                    "is_on",
+                    "set_hue",
+                    "set_saturation",
+                    "set_value",
+                    "get_color"
+            );
+        }
+        return List.of();
+    }
 
     private void createDevice() {
         if (currentHouse == null || currentRoom == null) {
@@ -357,17 +372,17 @@ public class CommandLineInterface {
             } while (deviceTypeName.isEmpty());
 
             switch (deviceTypeName) {
-                case "lightbulb" -> {
+                case "LIGHTBULB" -> {
                     LightBulb lightbulb = new LightBulb(name);
                     currentRoom.addDevice(lightbulb);
                     System.out.println("Lightbulb has been successfully created.");
                 }
-                case "outlet" -> {
+                case "OUTLET" -> {
                     Outlet outlet = new Outlet(name);
                     currentRoom.addDevice(outlet);
                     System.out.println("Outlet has been successfully created.");
                 }
-                case "temperature_sensor" -> {
+                case "TEMPERATURE_SENSOR" -> {
                     TemperatureSensor temperatureSensor = new TemperatureSensor(name);
                     currentRoom.addDevice(temperatureSensor);
                     System.out.println("Temperature sensor has been successfully created.");
@@ -377,53 +392,187 @@ public class CommandLineInterface {
     }
 
     private void removeDevice() {
-        if(currentHouse == null && currentRoom == null) {
+        if (currentHouse == null && currentRoom == null) {
             System.out.println("Enter the house and room where you want to delete a room.");
         } else {
-            if(currentRoom.getDevices().isEmpty()) {
+            if (currentRoom.getDevices().isEmpty()) {
                 System.out.println("There is no any rooms and devices yet in this house.");
             } else {
                 printCommandLine("Enter name for device that you want to delete");
                 String name;
                 do {
                     name = scanner.nextLine();
-                    if(!currentRoom.getDevices().containsKey(name)) {
+                    if (!currentRoom.getDevices().containsKey(name)) {
                         System.out.println("Device with \"" + name + "\" does not exists. Please use valid name for the device.");
                     }
-                } while(!currentRoom.getDevices().containsKey(name));
+                } while (!currentRoom.getDevices().containsKey(name));
 
-                currentRoom.getDevices().remove(name);
-                currentDevice = null;
-                System.out.println("Device \"" + name + "\n has been deleted successfully!");
+                currentRoom.deleteDevice(name);
+                System.out.println("Device \"" + name + "\" has been deleted successfully!");
             }
         }
     }
 
     private void listDevicesTypes() {
         System.out.println("Devices types");
-        for(DevicesTypes type : DevicesTypes.values()) {
+        for (DevicesTypes type : DevicesTypes.values()) {
             System.out.println(type.ordinal() + ". " + type.name());
         }
     }
 
     private void listDevices() {
-        if(currentHouse == null || currentRoom == null) {
+        if (currentHouse == null || currentRoom == null) {
             System.out.println("Enter the house and room where you want to list devices.");
         } else {
-            if(currentRoom.getDevices().isEmpty()) {
+            if (currentRoom.getDevices().isEmpty()) {
                 System.out.println("There are no created devices yet!\nUse \"create_device\" command to create one.");
             } else {
                 System.out.println("DEVICE NAME | DEVICE STATUS");
-                for(SmartDevice device : currentRoom.getDevices().values()) {
+                for (SmartDevice device : currentRoom.getDevices().values()) {
                     System.out.println(device.getName() + " | " + device.getStatus());
                 }
             }
         }
     }
 
+    private void manageDevice() {
+        listDevices();
+        String name;
 
+        do {
+            printCommandLine("Choose the device");
+            name = scanner.nextLine();
+            if (!currentRoom.getDevices().containsKey(name)) {
+                System.out.println("Device with name " + name + " does not exist. Enter valid name.");
+            }
+        } while (!currentRoom.getDevices().containsKey(name));
 
-private void printCommandLine(String phrase) {
-System.out.print(getPrefixCli() + phrase + " > ");
-}
+        SmartDevice device = currentRoom.getDevice(name);
+        List<String> commands = getdeviceCommands(device);
+        printAllowedCommandsOfDevice(device);
+        String command;
+
+        do {
+            printCommandLine("Enter command from the list");
+            command = scanner.nextLine();
+            if(!commands.contains(command)) {
+                System.out.println("That command does not exist. Enter valid one.");
+            }
+        } while (!commands.contains(command));
+        Object input = null;
+
+        if(command.equals("set_temperature")) {
+            do {
+                printCommandLine("Enter valid value for temperature");
+                 input = scanner.nextDouble();
+            } while (input == null);
+        }
+
+        if(command.equals("set_status")) {
+            do {
+                listDeviceStatuses(device);
+                printCommandLine("Enter valid status for device");
+                input = scanner.nextLine();
+                if (!device.getAllowedStatuses().contains(input)) {
+                    System.out.println("The status " + input + " does not exist. Enter valid status.");
+                }
+            } while (!device.getAllowedStatuses().contains(input));
+        }
+
+        if(command.equals("set_hue")) {
+            do {
+                printCommandLine("Enter float value for hue");
+                input = scanner.nextFloat();
+                float inputAsFloat = Float.parseFloat(input.toString());
+                if(0 <= inputAsFloat && inputAsFloat < 360) {
+                    input = inputAsFloat;
+                }
+            } while (input == null);
+        }
+
+        if(command.equals("set_saturation")) {
+            do {
+                printCommandLine("Enter float value for saturation");
+                input = scanner.nextFloat();
+                float inputAsFloat = Float.parseFloat(input.toString());
+                if(0 <= inputAsFloat && inputAsFloat <= 1) {
+                    input = inputAsFloat;
+                }
+            } while (input == null);
+        }
+
+        if(command.equals("set_value")) {
+            do {
+                printCommandLine("Enter float value for value");
+                input = scanner.nextFloat();
+                float inputAsFloat = Float.parseFloat(input.toString());
+                if(0 <= inputAsFloat && inputAsFloat <= 1) {
+                    input = inputAsFloat;
+                }
+            } while (input == null);
+        }
+
+        executeDeviceCommand(device, command, input);
+
+    }
+
+    private void executeDeviceCommand(SmartDevice device, String command, Object input) {
+        if(device instanceof TemperatureSensor temperatureSensor) {
+            executeTemperatureSensorCommand(temperatureSensor, command, input);
+        }
+        if(device instanceof Outlet outlet) {
+            executeOutletCommand(outlet,command,input);
+        }
+        if(device instanceof LightBulb lightBulb) {
+            executeLightBulbCommand(lightBulb,command,input);
+        }
+    }
+
+    private void executeTemperatureSensorCommand(TemperatureSensor temperatureSensor, String command, Object input) {
+        switch (command) {
+            case "get_temperature" -> System.out.println(temperatureSensor.getTemperature());
+            case "set_temperature" -> temperatureSensor.setTemperature(Double.valueOf(input.toString()));
+            case "set_status" -> temperatureSensor.setStatus(DeviceStatus.valueOf(input.toString()));
+        }
+    }
+
+    private void executeOutletCommand(Outlet outlet, String command, Object input) {
+        switch (command) {
+            case "turn_on" -> outlet.turnOn();
+            case "turn_off" -> outlet.turnOff();
+            case "is_in_use" -> outlet.isInUse();
+            case "use_outlet" -> outlet.useOutlet();
+        }
+    }
+
+    private void executeLightBulbCommand(LightBulb lightBulb, String command, Object input) {
+        switch (command) {
+            case "turn_on" -> lightBulb.turnOn();
+            case "turn_off" -> lightBulb.turnOff();
+            case "is_on" -> System.out.println(lightBulb.isOn());
+            case "set_hue" -> lightBulb.setHue(Float.valueOf(input.toString()));
+            case "set_saturation" -> lightBulb.setSaturation(Float.valueOf(input.toString()));
+            case "set_value" -> lightBulb.setValue(Float.valueOf(input.toString()));
+            case "get_color" -> System.out.println(lightBulb.getRGBColor());
+        }
+    }
+
+    private void printAllowedCommandsOfDevice(SmartDevice device) {
+        List<String> commands = getdeviceCommands(device);
+        System.out.println("Allowed commands are:");
+        for(String command : commands) {
+            System.out.println(command);
+        }
+    }
+
+    private void listDeviceStatuses(SmartDevice device) {
+        List<String> statuses = device.getAllowedStatuses();
+        for(String status : statuses) {
+            System.out.println(status);
+        }
+    }
+
+    private void printCommandLine(String phrase) {
+        System.out.print(getPrefixCli() + phrase + " > ");
+    }
 }

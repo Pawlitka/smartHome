@@ -61,27 +61,15 @@ public class LightBulb extends SmartDevice implements Switchable {
         return isOn;
     }
 
-    public Float setHue(Float value) {
-            if (0 <= value && value > 360) {
-                throw new IllegalArgumentException("Hue has to be greater or equal to 0 and smaller than 360");
-            }
-            this.hue = value;
-        return hue;
+    public void setHue(Float value) {
+        this.hue = value;
     }
 
-    public Float setSaturation(Float value) {
-            if(0 <= value && value <= 1) {
-                throw new IllegalArgumentException("Saturation has to be greater or equal to 0 and smaller or equal to 1");
-            }
-            this.saturation = value;
-        return saturation;
+    public void setSaturation(Float value) {
+        this.saturation = value;
     }
 
-    public Float setValue(Float value) {
-        if(0 <= value && value <= 1) {
-            throw new IllegalArgumentException("Value has to be greater or equal to 0 and smaller or equal to 1");
-        }
+    public void setValue(Float value) {
         this.value = value;
-        return value;
     }
 }

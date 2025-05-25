@@ -1,6 +1,4 @@
 import smartDevices.SmartDevice;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Room {
@@ -17,8 +15,8 @@ public class Room {
         devices.put(device.getName(), device);
     }
 
-    public void removeDevice(SmartDevice device) {
-        devices.remove(device.getName(), device);
+    public void deleteDevice(String deviceName) {
+        devices.remove(deviceName);
     }
 
     public HashMap<String, SmartDevice> getDevices() {
@@ -37,7 +35,6 @@ public class Room {
         return devicesAsString;
     }
 
-
     public String getName() {
         return name;
     }
@@ -49,5 +46,9 @@ public class Room {
     @Override
     public String toString() {
         return this.name + ":" + this.type;
+    }
+
+    public SmartDevice getDevice(String nameDevice) {
+        return devices.get(nameDevice);
     }
 }

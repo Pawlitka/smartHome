@@ -23,8 +23,8 @@ public class House {
         numberOfRooms++;
     }
 
-    public void deleteRoom(Room room) {
-        rooms.put(room.getName(), room);
+    public void deleteRoom(String roomName) {
+        rooms.remove(roomName);
         numberOfRooms--;
     }
 
