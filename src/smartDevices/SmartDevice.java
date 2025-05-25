@@ -33,7 +33,7 @@ public abstract class SmartDevice {
 
     @Override
     public String toString() {
-        return uuid + " " + name + " " + status;
+        return name + " " + status;
     }
 
     private void checkIfStatusIsAllowed(DeviceStatus status) {

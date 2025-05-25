@@ -341,6 +341,27 @@ public class CommandLineInterface {
                     "get_color"
             );
         }
+        if (device instanceof SmartTv) {
+            return List.of(
+                    "turn_on",
+                    "turn_off",
+                    "is_on"
+            );
+        }
+        if (device instanceof DevicesManager) {
+            return List.of(
+                    "turn_devices_off",
+                    "turn_devices_on",
+                    "set_status",
+                    "update"
+            );
+        }
+        if (device instanceof MotionSensor) {
+            return List.of(
+                    "set_status",
+                    "is_motion_detected"
+            );
+        }
         return List.of();
     }
 
@@ -392,11 +413,11 @@ public class CommandLineInterface {
                     currentRoom.addDevice(smartTv);
                     System.out.println("Smart tv has been successfully created.");
                 }
-                case "DEVICES_MANAGER" -> {
-                    DevicesManager devicesManager = new DevicesManager(name);
-                    currentRoom.addDevice(devicesManager);
-                    System.out.println("Devices manager has been successfully created.");
-                }
+//                case "DEVICES_MANAGER" -> {
+//                    DevicesManager devicesManager = new DevicesManager();
+//                    currentRoom.addDevice(devicesManager);
+//                    System.out.println("Devices manager has been successfully created.");
+//                }
                 case "MOTION_SENSOR" -> {
                     MotionSensor motionSensor = new MotionSensor(name);
                     currentRoom.addDevice(motionSensor);
@@ -534,7 +555,7 @@ public class CommandLineInterface {
                 if(input != currentRoom.getDevice(name)) {
                     System.out.println("Device with name " + name + " does not exist. Enter valid name.");
                 }
-            } while (input == null);
+            } while (input != currentRoom.getDevice(name));
             input = currentRoom.getDevice(name);
         }
 
@@ -551,6 +572,15 @@ public class CommandLineInterface {
         }
         if(device instanceof LightBulb lightBulb) {
             executeLightBulbCommand(lightBulb,command,input);
+        }
+        if(device instanceof  MotionSensor motionSensor) {
+            executeMotionSensorCommands(motionSensor,command,input);
+        }
+        if(device instanceof SmartTv smartTv) {
+            executeSmartTvCommands(smartTv,command,input);
+        }
+        if(device instanceof DevicesManager devicesManager) {
+            executeDevicesManagerCommands(devicesManager,command,input);
         }
     }
 
@@ -601,7 +631,6 @@ public class CommandLineInterface {
 
     private void executeDevicesManagerCommands(DevicesManager devicesManager, String command, Object input) {
         switch(command) {
-            case "add_device" -> devicesManager.addDevice((SmartDevice) input);
             case "turn_devices_off" -> devicesManager.turnAllOff();
             case "turn_devices_on" -> devicesManager.turnAllOn();
             case "set_status" -> devicesManager.setStatus(DeviceStatus.valueOf(input.toString()));

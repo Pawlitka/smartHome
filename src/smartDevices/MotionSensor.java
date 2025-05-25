@@ -4,9 +4,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
-public class MotionSensor extends SmartDevice implements SensorDevice{
+public class MotionSensor extends SmartDevice implements SensorDevice, Switchable {
     private boolean motionDetected;
     private Random random = new Random();
+    private boolean isOn;
     private final static HashSet<DeviceStatus> ALLOWED_STATUSES = new HashSet<>(Arrays.asList(
             DeviceStatus.ON,
             DeviceStatus.OFF,
@@ -17,6 +18,7 @@ public class MotionSensor extends SmartDevice implements SensorDevice{
         super(ALLOWED_STATUSES);
         this.motionDetected = false;
         this.status = DeviceStatus.OFF;
+        this.name = name;
     }
 
     @Override
@@ -47,4 +49,29 @@ public class MotionSensor extends SmartDevice implements SensorDevice{
         return motionDetected;
     }
 
+    @Override
+    public void turnOff() {
+        if(isOn) {
+            status = DeviceStatus.OFF;
+            System.out.println("SmartTv has turned " + getStatus() + ".");
+        } else {
+            System.out.println("SmartTv is already turned " + getStatus() + ".");
+        }
+    }
+
+    @Override
+    public void turnOn() {
+        if(!isOn) {
+            isOn = true;
+            status = DeviceStatus.ON;
+            System.out.println("SmartTv has turned " + getStatus() + ".");
+        } else {
+            System.out.println("SmartTv is already turned " + getStatus() + ".");
+        }
+    }
+
+    @Override
+    public boolean isOn() {
+        return isOn;
+    }
 }

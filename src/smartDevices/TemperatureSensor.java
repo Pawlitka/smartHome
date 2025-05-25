@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class TemperatureSensor extends SmartDevice implements SensorDevice {
+public class TemperatureSensor extends SmartDevice implements SensorDevice, Switchable {
 
     private final static HashSet<DeviceStatus> ALLOWED_STATUSES = new HashSet<>(Arrays.asList(
             DeviceStatus.ON,
@@ -14,7 +14,7 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice {
             DeviceStatus.LOW_BATTERY,
             DeviceStatus.TAMPERED
     ));
-
+    private boolean isOn;
     private  Double currentTemperature;
 
     public TemperatureSensor(String name) {
@@ -66,4 +66,29 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice {
             _ -> getTemperature() < 16,
             _ -> setTemperature(currentTemperature + (Math.random() + 1) * 3));
 
+    @Override
+    public void turnOff() {
+        if(isOn) {
+            status = DeviceStatus.OFF;
+            System.out.println("SmartTv has turned " + getStatus() + ".");
+        } else {
+            System.out.println("SmartTv is already turned " + getStatus() + ".");
+        }
+    }
+
+    @Override
+    public void turnOn() {
+        if(!isOn) {
+            isOn = true;
+            status = DeviceStatus.ON;
+            System.out.println("SmartTv has turned " + getStatus() + ".");
+        } else {
+            System.out.println("SmartTv is already turned " + getStatus() + ".");
+        }
+    }
+
+    @Override
+    public boolean isOn() {
+        return isOn;
+    }
 }

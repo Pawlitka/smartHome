@@ -1,10 +1,11 @@
+import smartDevices.DevicesManager;
 import smartDevices.SmartDevice;
 import java.util.HashMap;
 
 public class Room {
     private final String name;
     private final RoomType type;
-    private final HashMap<String, SmartDevice>  devices = new HashMap<>();
+    private final DevicesManager devicesManager = new DevicesManager();
 
     public Room(String name, RoomType type) {
         this.name = name;
@@ -12,24 +13,24 @@ public class Room {
     }
 
     public void addDevice(SmartDevice device) {
-        devices.put(device.getName(), device);
+        devicesManager.addDevice(device);
     }
 
     public void deleteDevice(String deviceName) {
-        devices.remove(deviceName);
+        devicesManager.deleteDevice(deviceName);
     }
 
     public HashMap<String, SmartDevice> getDevices() {
-        return devices;
+        return devicesManager.getDevices();
     }
 
     public String getDevicesAsString() {
-        if(devices.isEmpty()) {
+        if(devicesManager.getDevices().isEmpty()) {
             return "NONE";
         }
 
         String devicesAsString = "";
-        for(SmartDevice device : devices.values()) {
+        for(SmartDevice device : devicesManager.getDevices().values()) {
             devicesAsString += device + ", ";
         }
         return devicesAsString;
@@ -49,6 +50,6 @@ public class Room {
     }
 
     public SmartDevice getDevice(String nameDevice) {
-        return devices.get(nameDevice);
+        return devicesManager.getDevices().get(nameDevice);
     }
 }

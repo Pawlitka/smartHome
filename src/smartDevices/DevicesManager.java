@@ -1,19 +1,20 @@
 package smartDevices;
 import java.util.*;
-import java.util.logging.Logger;
 
 public class DevicesManager extends SmartDevice implements ObservableDevice, DeviceObserver{
     private final List<DeviceObserver> observers = new ArrayList<>();
-    private final HashMap<String, SmartDevice> managedDevices = new HashMap<>();
+    private final HashMap<String, SmartDevice> devices = new HashMap<>();
     private final static HashSet<DeviceStatus> ALLOWED_STATUSES = new HashSet<>(Arrays.asList(
             DeviceStatus.ON,
             DeviceStatus.OFF
     ));
     private final List<Rule> rules = new ArrayList<>();
 
-    public DevicesManager(String name) {
+    public DevicesManager() {
         super(ALLOWED_STATUSES);
-        super.name = name;
+        name = "DevicesManager";
+        devices.put(name, this);
+        this.status = DeviceStatus.ON;
     }
 
     @Override
@@ -65,11 +66,19 @@ public class DevicesManager extends SmartDevice implements ObservableDevice, Dev
     }
 
     public void addDevice(SmartDevice device) {
-        managedDevices.put(device.getName(), device);
+        devices.put(device.getName(), device);
+    }
+
+    public void deleteDevice(String deviceName) {
+        devices.remove(deviceName);
+    }
+
+    public HashMap<String, SmartDevice> getDevices() {
+        return devices;
     }
 
     public void turnAllOff() {
-        for (SmartDevice device : managedDevices.values()) {
+        for (SmartDevice device : devices.values()) {
             if (device instanceof Switchable switchable) {
                 switchable.turnOff();
             }
@@ -77,7 +86,7 @@ public class DevicesManager extends SmartDevice implements ObservableDevice, Dev
     }
 
     public void turnAllOn() {
-        for (SmartDevice device : managedDevices.values()) {
+        for (SmartDevice device : devices.values()) {
             if (device instanceof Switchable switchable) {
                 switchable.turnOn();
             }
